@@ -1,0 +1,15 @@
+{
+	"manifest_version": 2,
+	"name": "UpgradeMixedContent",
+	"version": "0.1.1",
+	"description": "Adds an 'upgrade-insecure-requests' CSP to all HTTPS server responses",
+	"icons": {
+		"48": "icons/icon.png"
+	},
+	"permissions": [
+		"https://*/*", "webRequest", "webRequestBlocking"
+	],
+	"background": {
+		"scripts": ["background.js"]
+	}
+}
