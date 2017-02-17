@@ -19,27 +19,26 @@ https://addons.mozilla.org/en-US/android/addon/upgrademixedcontent/
 GPL3.0, Author: Pascal Ernster
 */
 function modifyCSP(e) {
-	log("UpgradeMixedContent: Triggered by HTTPS request");
 	let CSPmissing = true;
 	for (var header of e.responseHeaders) {
 		if (header.name.toLowerCase() === "content-security-policy") {
 			if (typeof header.value === 'string') {
 				if(header.value.search("upgrade-insecure-requests") === -1) {
 					header.value += ";upgrade-insecure-requests";
-					log("UpgradeMixedContent: Added 'upgrade-insecure-requests' to server CSP");
+					log("[Added header to CSP] "+e.url);
 				} else {
-					log("UpgradeMixedContent: 'upgrade-insecure-requests' already present in unmodified server CSP");
+					log("[Header already present] "+e.url);
 				}
 				CSPmissing = false;
 			} else {
-				log("UpgradeMixedContent: 'content-security-policy' header is not a UTF-8 string");
+				console.warn("[Header is not a UTF-8 string] "+e.url);
 			}
 		}
 	}
 	if (CSPmissing === true) {
 		e.responseHeaders.push({name: "content-security-policy", value: "upgrade-insecure-requests"});
 		CSPmissing = false;
-		log("UpgradeMixedContent: Added 'upgrade-insecure-requests' CSP to server respose");
+		log("[Added header to respose] "+e.url);
 	}
 	return {responseHeaders: e.responseHeaders};
 }
@@ -52,5 +51,4 @@ Make it "blocking" so we can modify the headers.
 chrome.webRequest.onHeadersReceived.addListener(modifyCSP,
 	{urls: ["https://*/*"]},
 	["blocking", "responseHeaders"]);
-
-console.log("UpgradeMixedContent: Added modifyCSP listener to onHeadersReceived");
+console.log("Added modifyCSP listener to onHeadersReceived");
