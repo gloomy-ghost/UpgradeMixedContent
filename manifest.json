@@ -12,8 +12,8 @@
 	"background": {
 		"scripts": ["background.js"]
 	},
-	"options_page": "options.html",
+	"options_page": "options/options.html",
 	"web_accessible_resources": [
-        "options.js"
+        "options/options.js"
     ]
 }
