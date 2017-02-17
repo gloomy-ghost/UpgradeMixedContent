@@ -1,5 +1,4 @@
 "use strict";
-
 console.log("UpgradeMixedContent: Web Extension loaded");
 
 /* Logging function are from https-everywhere codebase */
@@ -19,6 +18,15 @@ https://addons.mozilla.org/en-US/android/addon/upgrademixedcontent/
 GPL3.0, Author: Pascal Ernster
 */
 function modifyCSP(e) {
+	//Look up backlist
+	let uri = document.createElement('a');
+	uri.href = e.url;
+
+	if (Number(blacklist[uri.hostname]) === 1) {
+		log("[Blacklist] "+e.url);
+		return;
+	}
+
 	let CSPmissing = true;
 	for (var header of e.responseHeaders) {
 		if (header.name.toLowerCase() === "content-security-policy") {
@@ -52,3 +60,5 @@ chrome.webRequest.onHeadersReceived.addListener(modifyCSP,
 	{urls: ["https://*/*"]},
 	["blocking", "responseHeaders"]);
 console.log("Added modifyCSP listener to onHeadersReceived");
+
+let blacklist = localStorage;
