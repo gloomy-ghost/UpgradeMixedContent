@@ -53,7 +53,7 @@ function modifyCSP(e) {
 }
 
 chrome.webRequest.onHeadersReceived.addListener(modifyCSP,
-	{urls: ["https://*/*"]},
+	{urls: ["https://*/*"], types: ["main_frame", "sub_frame"]},
 	["blocking", "responseHeaders"]);
 
 let blacklist = localStorage;
