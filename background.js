@@ -1,22 +1,23 @@
-"use strict";
-console.log("UpgradeMixedContent: Web Extension loaded");
-
-/* Logging function are from https-everywhere codebase */
-console.log("Hey developer! Want to see more verbose logging?");
-console.log("Type this into the console: DEFAULT_LOG_LEVEL=1");
-
-let DEFAULT_LOG_LEVEL=2;
-function log(str) {
-    if (DEFAULT_LOG_LEVEL == 1) {
-            console.log(str);
-    }
-}
-
 /*
-Modify the CSP
-https://addons.mozilla.org/en-US/android/addon/upgrademixedcontent/
-GPL3.0, Author: Pascal Ernster
+    Modify the CSP
+    Copyright (C) 2016 Pascal Ernster
+    Copyright (C) 2017 ghost
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+"use strict";
 function modifyCSP(e) {
 	//Look up backlist
 	let uri = document.createElement('a');
@@ -27,8 +28,8 @@ function modifyCSP(e) {
 		return;
 	}
 
-	let CSPmissing = true;
-	for (var header of e.responseHeaders) {
+	let CSPMissing = true;
+	for (let header of e.responseHeaders) {
 		if (header.name.toLowerCase() === "content-security-policy") {
 			if (typeof header.value === 'string') {
 				if(header.value.search("upgrade-insecure-requests") === -1) {
@@ -37,28 +38,32 @@ function modifyCSP(e) {
 				} else {
 					log("[Header already present] "+e.url);
 				}
-				CSPmissing = false;
+				CSPMissing = false;
 			} else {
 				console.warn("[Header is not a UTF-8 string] "+e.url);
 			}
 		}
 	}
-	if (CSPmissing === true) {
+	if (CSPMissing === true) {
 		e.responseHeaders.push({name: "content-security-policy", value: "upgrade-insecure-requests"});
-		CSPmissing = false;
+		CSPMissing = false;
 		log("[Added header to respose] "+e.url);
 	}
 	return {responseHeaders: e.responseHeaders};
 }
 
-
-/*
-Add modifyCSP as a listener to onHeadersReceived,
-Make it "blocking" so we can modify the headers.
-*/
 chrome.webRequest.onHeadersReceived.addListener(modifyCSP,
 	{urls: ["https://*/*"]},
 	["blocking", "responseHeaders"]);
-console.log("Added modifyCSP listener to onHeadersReceived");
 
 let blacklist = localStorage;
+
+let DEFAULT_LOG_LEVEL=2;
+function log(str) {
+    if (DEFAULT_LOG_LEVEL == 1) {
+            console.log(str);
+    }
+}
+
+console.log("UpgradeMixedContent: Web Extension loaded");
+console.log("DEFAULT_LOG_LEVEL=1 for more verbose logging");
