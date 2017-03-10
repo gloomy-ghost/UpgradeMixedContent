@@ -51,15 +51,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	removeButton.addEventListener('click', function () {
 		let remove = [];
-		for (let i = 0; i < excludedDomainsBox.length; i++)
-			if (excludedDomainsBox.options[i].selected)
-				remove.push(excludedDomainsBox.options[i].value);
+		for (let domain of excludedDomainsBox.options)
+			if (domain.selected)
+				remove.push(domain.value);
 		if (!remove.length)
 			return;
 
-		for (let i = 0; i < remove.length; i++){
-			localStorage[remove[i]] = 0;
-			removeFromListBox('excludedDomainsBox', remove[i]);
+		for (let domain of remove){
+			localStorage.removeItem(domain);
+			removeFromListBox('excludedDomainsBox',domain);
 		}
 	});
 });
