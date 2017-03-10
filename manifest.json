@@ -12,8 +12,7 @@
 	"background": {
 		"scripts": ["background.js"]
 	},
-	"options_page": "options/options.html",
-	"web_accessible_resources": [
-        "options/options.js"
-    ]
+	"options_ui": {
+		"page": "options/options.html"
+	}
 }
