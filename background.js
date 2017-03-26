@@ -20,7 +20,7 @@
 
 let DEFAULT_LOG_LEVEL=2;
 function log(str) {
-    if (DEFAULT_LOG_LEVEL == 1) {
+    if (DEFAULT_LOG_LEVEL === 1) {
             console.log(str);
     }
 }
