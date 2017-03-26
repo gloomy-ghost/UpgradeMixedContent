@@ -17,24 +17,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 'use strict';
-
-let DEFAULT_LOG_LEVEL=2;
-function log(str) {
-    if (DEFAULT_LOG_LEVEL === 1) {
-            console.log(str);
-    }
-}
-console.log('DEFAULT_LOG_LEVEL=1 for more verbose logging');
-
 let blacklist = localStorage;
-
 function modifyCSP(e) {
 	//Look up backlist
 	let uri = document.createElement('a');
 	uri.href = e.url;
 
 	if (Number(blacklist[uri.hostname]) === 1) {
-		log('[Blacklist] '+e.url);
 		return;
 	}
 
@@ -44,19 +33,13 @@ function modifyCSP(e) {
 			if (typeof header.value === 'string') {
 				if (header.value.search('upgrade-insecure-requests') === -1) {
 					header.value += ';upgrade-insecure-requests';
-					log('[Added header to CSP] '+e.url);
-				} else {
-					log('[Header already present] '+e.url);
-				}
-				CSPMissing = false;
-			} else {
-				console.warn('[Header is not a UTF-8 string] '+e.url);
-			}
-		}
+                    CSPMissing = false;
+                }
+            }
+        }
 	}
 	if (CSPMissing === true) {
 		e.responseHeaders.push({name: 'content-security-policy', value: 'upgrade-insecure-requests'});
-		log('[Added header to respose] '+e.url);
 	}
 	return {responseHeaders: e.responseHeaders};
 }
