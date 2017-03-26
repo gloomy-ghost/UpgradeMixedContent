@@ -16,47 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-"use strict";
-function modifyCSP(e) {
-	//Look up backlist
-	let uri = document.createElement('a');
-	uri.href = e.url;
-
-	if (Number(blacklist[uri.hostname]) === 1) {
-		log("[Blacklist] "+e.url);
-		return;
-	}
-
-	let CSPMissing = true;
-	for (let header of e.responseHeaders) {
-		if (header.name.toLowerCase() === "content-security-policy") {
-			if (typeof header.value === 'string') {
-				if(header.value.search("upgrade-insecure-requests") === -1) {
-					header.value += ";upgrade-insecure-requests";
-					log("[Added header to CSP] "+e.url);
-				} else {
-					log("[Header already present] "+e.url);
-				}
-				CSPMissing = false;
-			} else {
-				console.warn("[Header is not a UTF-8 string] "+e.url);
-			}
-		}
-	}
-	if (CSPMissing === true) {
-		e.responseHeaders.push({name: "content-security-policy", value: "upgrade-insecure-requests"});
-		CSPMissing = false;
-		log("[Added header to respose] "+e.url);
-	}
-	return {responseHeaders: e.responseHeaders};
-}
-
-chrome.webRequest.onHeadersReceived.addListener(modifyCSP,
-	{urls: ["https://*/*"], types: ["main_frame", "sub_frame"]},
-	["blocking", "responseHeaders"]);
-
-let blacklist = localStorage;
+'use strict';
 
 let DEFAULT_LOG_LEVEL=2;
 function log(str) {
@@ -64,6 +24,43 @@ function log(str) {
             console.log(str);
     }
 }
+console.log('DEFAULT_LOG_LEVEL=1 for more verbose logging');
 
-console.log("UpgradeMixedContent: Web Extension loaded");
-console.log("DEFAULT_LOG_LEVEL=1 for more verbose logging");
+let blacklist = localStorage;
+
+function modifyCSP(e) {
+	//Look up backlist
+	let uri = document.createElement('a');
+	uri.href = e.url;
+
+	if (Number(blacklist[uri.hostname]) === 1) {
+		log('[Blacklist] '+e.url);
+		return;
+	}
+
+	let CSPMissing = true;
+	for (let header of e.responseHeaders) {
+		if (header.name.toLowerCase() === 'content-security-policy') {
+			if (typeof header.value === 'string') {
+				if (header.value.search('upgrade-insecure-requests') === -1) {
+					header.value += ';upgrade-insecure-requests';
+					log('[Added header to CSP] '+e.url);
+				} else {
+					log('[Header already present] '+e.url);
+				}
+				CSPMissing = false;
+			} else {
+				console.warn('[Header is not a UTF-8 string] '+e.url);
+			}
+		}
+	}
+	if (CSPMissing === true) {
+		e.responseHeaders.push({name: 'content-security-policy', value: 'upgrade-insecure-requests'});
+		log('[Added header to respose] '+e.url);
+	}
+	return {responseHeaders: e.responseHeaders};
+}
+
+chrome.webRequest.onHeadersReceived.addListener(modifyCSP,
+	{urls: ['https://*/*'], types: ['main_frame', 'sub_frame']},
+	['blocking', 'responseHeaders']);
