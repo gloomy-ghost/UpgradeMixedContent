@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "UpgradeMixedContent",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Resloves some mixedcontent blocking.",
 	"icons": {
 		"48": "icons/icon.png"

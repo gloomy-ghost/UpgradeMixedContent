@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
     removeButton.addEventListener('click', function () {
         for (const domain of excludedDomainsBox.options){
             if (domain.selected){
-                localStorage.removeItem(domain);
-                removeFromListBox('excludedDomainsBox',domain);
+                localStorage.removeItem(domain.value);
+                removeFromListBox('excludedDomainsBox', domain.value);
             }
         }
     });
