@@ -38,7 +38,7 @@ function modifyCSP(e) {
             }
         }
 	}
-	if (CSPMissing === true) {
+	if (CSPMissing) {
 		e.responseHeaders.push({name: 'content-security-policy', value: 'upgrade-insecure-requests'});
 	}
 	return {responseHeaders: e.responseHeaders};
